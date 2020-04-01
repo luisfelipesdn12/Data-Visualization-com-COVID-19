@@ -274,11 +274,11 @@ def plotCases():
     green_patch = mpatches.Patch(color='green', label='Brasil sem São Paulo')
     red_patch = mpatches.Patch(color='red', label='Brasil')
     plt.legend(handles=[C0_patch, red_patch, green_patch], loc='upper left')
-    source = r'''Elaborado a partir dos dados do Ministério da Saúde sobre o COVID-19.
-Disponível em: <kaggle.com/unanimad/corona-virus-brazil>. Acesso em: 31/03/2020 às 19:27.'''
+    source = r'''Elaborado a partir dos dados do Ministério da Saúde sobre o COVID-19. Disponível em: <kaggle.com/unanimad/corona-virus-brazil>.
+Acesso em: 31/03/2020 às 19:27. (Em 31/03/2020 o método de testagem foi alterado)'''
     plt.annotate(source, (0,0), (-44,-37), fontsize=8,
              xycoords='axes fraction', textcoords='offset points', va='top')
-    plt.savefig(dpi=400, fname=r'./img/Comparação do número de casos de COVID-19 reportados por dia em São Paulo Brasil sem São Paulo e Brasil no mês de Março-atl3003.png'.replace(' ', '-'))
+    plt.savefig(dpi=400, fname=r'./img/Comparação do número de casos de COVID-19 reportados por dia em São Paulo Brasil sem São Paulo e Brasil no mês de Março-atl3103.png'.replace(' ', '-'))
     plt.show()
 
 def plotDeaths():
@@ -335,5 +335,5 @@ Disponível em: <kaggle.com/unanimad/corona-virus-brazil>. Acesso em: 31/03/2020
     plt.savefig(dpi=400, fname=r'./img/Comparação do número de óbitos causados pr COVID-19 reportados por dia em São Paulo Brasil sem São Paulo e Brasil no mês de Março-atl3003.png'.replace(' ', '-'))
     plt.show()
 
-#plotCases()
-plotDeaths()
+plotCases()
+#plotDeaths()
