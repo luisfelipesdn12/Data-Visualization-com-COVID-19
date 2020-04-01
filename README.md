@@ -20,8 +20,8 @@ A partir [desses dados](./datasets), utilizei a linguagem Python juntamente com 
 O primeiro gráfico que eu plotei nesse projeto foi esse:
 ![BOXPLOT-Comparacao-de-idade-entre-casos-totais-e-casos-de-obito-em-pacientes-com-COVID-19](https://raw.githubusercontent.com/luisfelipesdn12/Data-Visualization-com-COVID-19/master/img/BOXPLOT-Comparacao-de-idade-entre-casos-totais-e-casos-de-obito-em-pacientes-com-COVID-19.png)
 > Fonte:
-  - Dado usado: [./datasets/COVID19_line_list_data.csv](./datasets/COVID19_line_list_data.csv)
-  - Atualização mais recente: https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset#COVID19_line_list_data.csv
+> - Dado usado: [./datasets/COVID19_line_list_data.csv](./datasets/COVID19_line_list_data.csv)
+> - Atualização mais recente: https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset#COVID19_line_list_data.csv
 
 Ele mostra a amplitude e a média da idade dos pacientes em casos reportados no total, e na parcela de óbitos.   
 Escolhi utilizar o diagrama de caixa - *aka.: boxplot* - pois nele é possível visualizar, além da mediana, onde estão concentrados a maioria dos dados, a amplitude geral deles, os valores mínimos e máximos e valores discrepantes e isolados.

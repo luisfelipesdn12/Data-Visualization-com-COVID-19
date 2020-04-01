@@ -7,8 +7,8 @@ dataset_pd = pd.read_csv(r'./datasets/brazil_covid19.csv')
 
 #define the columns
 state_column = dataset_pd['state'].tolist()
-suspects_column = dataset_pd['suspects'].tolist()
 cases_column = dataset_pd['cases'].tolist()
+deaths_column = dataset_pd['deaths'].tolist()
 date_column = dataset_pd['date'].tolist()
 
 def returnDatesWithoutRepeat():
@@ -45,6 +45,26 @@ def returnAllCasesInASpecificDate(specificdate:str):
 
     return(cases_added)
 
+def returnAllDeathsInASpecificDate(specificdate:str):
+    '''
+    Given a specific date, returns an
+    int() number of all the deaths in it.
+    '''
+    deaths_column = dataset_pd['deaths'].tolist()
+    date_column = dataset_pd['date'].tolist()
+
+    deaths_in_this_date_list = list()
+
+    for c in range(len(date_column)):
+        if date_column[c] == specificdate:
+            deaths_in_this_date_list.append(deaths_column[c])
+
+    deaths_added = 0
+    for death in deaths_in_this_date_list:
+        deaths_added += death
+
+    return(deaths_added)
+
 def returnAllCasesForEachDate():
     '''
     Returns a dict(), the keys represents
@@ -58,6 +78,19 @@ def returnAllCasesForEachDate():
 
     return(dates_and_cases)
 
+def returnAllDeathsForEachDate():
+    '''
+    Returns a dict(), the keys represents
+    the dates, the values represents the deaths in it.
+    '''
+    dates_without_repeat = returnDatesWithoutRepeat()
+    dates_and_deaths = dict()
+
+    for date in dates_without_repeat:
+        dates_and_deaths[date] = returnAllDeathsInASpecificDate(date)
+
+    return(dates_and_deaths)
+
 
 def returnDictOfDateAndCasesInAMonth( month:str, some_dict = returnAllCasesForEachDate()):
     '''
@@ -69,6 +102,30 @@ def returnDictOfDateAndCasesInAMonth( month:str, some_dict = returnAllCasesForEa
     the cases being the values. (opitional,
     for default uses the dict returned in
     returnAllCasesForEachDate() function);
+        2. A month in str() format, e.g.:'03'.
+    (needed, has not a default value);
+    '''
+    new_dict = dict()
+    some_dict_keys = list(some_dict.keys())
+    some_dict_values = list(some_dict.values())
+
+
+    for c in range(len(some_dict_keys)):
+        if some_dict_keys[c][5:7] == month:
+            new_dict[some_dict_keys[c]] = some_dict_values[c]
+
+    return(new_dict)
+
+def returnDictOfDateAndDeathsInAMonth( month:str, some_dict = returnAllDeathsForEachDate()):
+    '''
+    Returns a dict that contains just the
+    dates and deaths of a especific month.
+
+    Ask for 2 arguments:
+        1. one dict with dates being the keys and
+    the deaths being the values. (opitional,
+    for default uses the dict returned in
+    returnAllDeathsForEachDate() function);
         2. A month in str() format, e.g.:'03'.
     (needed, has not a default value);
     '''
@@ -106,6 +163,29 @@ def returnDictOfDateAndCases(city:str, month:str):
 
     return(date_and_cases)
 
+def returnDictOfDateAndDeaths(city:str, month:str):
+    '''
+    Returns a dict that contains the dates
+    and deaths given a specific month and a
+    especific city, both in str() format.
+    '''
+    city_deaths = list()
+    date_of_deaths = list()
+    just_the_day = list()
+
+    for c in range(len(deaths_column)):
+        if date_column[c][5:7] == str(month) and state_column[c] == str(city):
+            city_deaths.append(int(deaths_column[c]))
+            date_of_deaths.append(date_column[c])
+            just_the_day.append(int(date_column[c][8:]))
+
+    date_and_deaths = dict()
+    date_and_deaths['date'] = date_of_deaths
+    date_and_deaths['date_days'] = just_the_day
+    date_and_deaths['deaths'] = city_deaths
+
+    return(date_and_deaths)
+
 def returnJustDays(some_list:list):
     '''
     Returns a list() with just the days
@@ -124,6 +204,7 @@ def returnJustDays(some_list:list):
 ####### Data visualization:
 
 dates_and_cases_in_mar = returnDictOfDateAndCasesInAMonth(month='03')
+dates_and_deaths_in_mar = returnDictOfDateAndDeathsInAMonth(month='03')
 
 import matplotlib.pyplot as plt
 import matplotlib.axes as maxes
@@ -146,7 +227,7 @@ def plotABoxplot():
     plt.savefig('BOXPLOT Comparação da média de casos de COVID-19 reportados por dia em São Paulo em Fevereiro e Março.png'.replace(' ', '-'), dpi=400)
     plt.show()
 
-def plot():
+def plotCases():
     fig, ax = plt.subplots(figsize=(8,4))
     sp_dates = returnDictOfDateAndCases('São Paulo', '03')['date_days']
     sp_cases = returnDictOfDateAndCases('São Paulo', '03')['cases']
@@ -194,10 +275,65 @@ def plot():
     red_patch = mpatches.Patch(color='red', label='Brasil')
     plt.legend(handles=[C0_patch, red_patch, green_patch], loc='upper left')
     source = r'''Elaborado a partir dos dados do Ministério da Saúde sobre o COVID-19.
-Disponível em: <kaggle.com/unanimad/corona-virus-brazil>. Acesso em: 30/03/2020 às 18:54.'''
+Disponível em: <kaggle.com/unanimad/corona-virus-brazil>. Acesso em: 31/03/2020 às 19:27.'''
     plt.annotate(source, (0,0), (-44,-37), fontsize=8,
              xycoords='axes fraction', textcoords='offset points', va='top')
     plt.savefig(dpi=400, fname=r'./img/Comparação do número de casos de COVID-19 reportados por dia em São Paulo Brasil sem São Paulo e Brasil no mês de Março-atl3003.png'.replace(' ', '-'))
     plt.show()
 
-plot()
+def plotDeaths():
+    fig, ax = plt.subplots(figsize=(8,4))
+    sp_dates = returnDictOfDateAndDeaths('São Paulo', '03')['date_days']
+    sp_deaths = returnDictOfDateAndDeaths('São Paulo', '03')['deaths']
+    ax.plot(sp_dates, sp_deaths)
+
+    brazil_dates = returnJustDays(list(dates_and_deaths_in_mar.keys()))
+    brazil_deaths = list(dates_and_deaths_in_mar.values())
+
+    def returnDatesAndDeathsWithoutSP():
+        dates_and_deaths_without_sp = dict()
+
+        for c in range(len(brazil_deaths)):
+            deaths_without_sp = brazil_deaths[c] - sp_deaths[c]
+            dates_and_deaths_without_sp[brazil_dates[c]] = deaths_without_sp
+
+        return(dates_and_deaths_without_sp)
+
+    brazil_without_sp_deaths = list(returnDatesAndDeathsWithoutSP().values())
+
+    ax.plot(brazil_dates,
+            brazil_deaths,
+            color='red')
+    ax.scatter(brazil_dates, brazil_deaths, color='red')
+
+    from pprint import pprint
+    print('dates_and_deaths_without_sp:')
+    pprint(returnDatesAndDeathsWithoutSP())
+    ax.plot(brazil_dates,
+            brazil_without_sp_deaths,
+            color='green')
+    ax.scatter(brazil_dates, brazil_without_sp_deaths, color='green')
+
+    ax.scatter(sp_dates, sp_deaths, color='C0')
+    fig.suptitle('Comparação do número de óbitos causados por COVID-19 por dia em São Paulo, \nBrasil sem São Paulo e Brasil no mês de Março')
+    #fig.set_ylabel('somke')
+    ax.set_ylabel('Número de óbitos')
+    ax.set_xlabel('Dia do mês (Março)')
+    plt.grid(True)
+    plt.subplots_adjust(top=0.87, left=0.10, bottom=0.20, right=0.95)
+
+    import matplotlib.patches as mpatches
+
+    C0_patch = mpatches.Patch(color='C0', label='São Paulo')
+    green_patch = mpatches.Patch(color='green', label='Brasil sem São Paulo')
+    red_patch = mpatches.Patch(color='red', label='Brasil')
+    plt.legend(handles=[C0_patch, red_patch, green_patch], loc='upper left')
+    source = r'''Elaborado a partir dos dados do Ministério da Saúde sobre o COVID-19.
+Disponível em: <kaggle.com/unanimad/corona-virus-brazil>. Acesso em: 31/03/2020 às 19:27.'''
+    plt.annotate(source, (0,0), (-44,-37), fontsize=8,
+             xycoords='axes fraction', textcoords='offset points', va='top')
+    plt.savefig(dpi=400, fname=r'./img/Comparação do número de óbitos causados pr COVID-19 reportados por dia em São Paulo Brasil sem São Paulo e Brasil no mês de Março-atl3003.png'.replace(' ', '-'))
+    plt.show()
+
+#plotCases()
+plotDeaths()
